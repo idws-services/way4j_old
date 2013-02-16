@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/NewXMLSchema" xmlns:w="http://www.example.org/NewXMLSchema" elementFormDefault="qualified">
+
+<element name="system">
+	<complexType>
+		<choice maxOccurs="unbounded" minOccurs="0">
+			<element name="configurations">
+				<complexType mixed="true">
+					<choice minOccurs="0" maxOccurs="unbounded">
+						<element name="dataSource">
+							<complexType>
+								<choice maxOccurs="unbounded" minOccurs="0">
+									<element name="hibernateProps">
+										<complexType>
+											<choice maxOccurs="unbounded" minOccurs="0">
+												<element ref="w:property"/>
+											</choice>
+										</complexType>
+									</element>
+								</choice>
+								<attribute name="user" use="required"/>
+								<attribute name="password" use="required"/>
+								<attribute name="url" use="required"/>
+								<attribute name="driver" use="required"/>
+							</complexType>
+						</element>
+						
+						<element name="resourceLocations">
+							<complexType>
+								 <choice minOccurs="6" maxOccurs="6">
+									<element name="model">
+								 		<complexType>
+								 			<attribute name="location" use="required"/>
+								 		</complexType>
+								 	</element>
+								 	<element name="controller">
+								 		<complexType>
+								 			<attribute name="location" use="required"/>
+								 		</complexType>
+								 	</element>
+								 	<element name="dao">
+								 		<complexType>
+								 			<attribute name="location" use="required"/>
+								 		</complexType>
+								 	</element>
+								 	<element name="service">
+								 		<complexType>
+								 			<attribute name="location" use="required"/>
+								 		</complexType>
+								 	</element>
+								 	<element name="lazyDataModel">
+								 		<complexType>
+								 			<attribute name="location" use="required"/>
+								 		</complexType>
+								 	</element>
+								 	<element name="view">
+								 		<complexType>
+								 			<attribute name="location" use="required"/>
+								 		</complexType>
+								 	</element>
+								 </choice>
+							</complexType>
+						</element>
+						
+					</choice>
+					<attribute name="systemName"/>
+				</complexType>
+			</element>
+			<element name="models">
+				<complexType>
+					<choice maxOccurs="unbounded" minOccurs="0">
+						<element name="model"></element>
+					</choice>
+				</complexType>		
+			</element>
+		</choice>
+	</complexType>
+</element>
+
+<!-- Elementos para herança : -->
+
+<element name="property">
+	<complexType>
+		<attribute name="name" use="required"/>
+		<attribute name="value" use="required"/>
+	</complexType>
+</element>
+	
+    
+</schema>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system xmlns="http://www.example.org/NewXMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/NewXMLSchema way4j/tools/systemBuild/systemDefinitions.xsd ">
+	
+	<configurations systemName="testApp">
+		
+		<dataSource user="postgresql" url="jdbc:postgresql://localhost:5432/idws_service_1" password="postgresql" driver="org.postgresql.Driver">
+			<hibernateProps>
+				 <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+			</hibernateProps>
+		</dataSource>
+		
+		<resourceLocations>
+			<controller location="way4j.application.controller"/>
+			<dao location="way4j.application.dao"/>
+			<lazyDataModel location="way4j.application.view"/>
+			<model location="way4j.application.model"/>
+			<service location="way4j.application.service"/>
+			<view location="way4j.application.view"/>
+		</resourceLocations>
+		
+	</configurations>
+	
+	<models>
+		<model></model>
+	</models>
+	
+</system>
