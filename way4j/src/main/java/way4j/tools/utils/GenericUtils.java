@@ -107,15 +107,6 @@ public class GenericUtils {
 		}
 	}
 	
-	public static JSONObject searchJsonObject(JSONArray jsonArray, String key) throws JSONException{
-		for(int i=0;i<jsonArray.length();i++){
-			if(jsonArray.getJSONObject(i).has(key)){
-				return jsonArray.getJSONObject(i).getJSONObject(key);
-			}
-		}
-		return null;
-	}
-
 	public ApplicationContext getSpringContext() {
 		return springContext;
 	}
@@ -133,8 +124,7 @@ public class GenericUtils {
 	}
 
 	public static Class getGenericTypeClass(Class generic){
-		return (Class)((ParameterizedType)generic
-				.getGenericSuperclass()).getActualTypeArguments()[0];
+		return (Class)((ParameterizedType)generic.getGenericSuperclass()).getActualTypeArguments()[0];
 	}
 
 }

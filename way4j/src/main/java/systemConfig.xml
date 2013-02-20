@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<system xmlns="http://www.example.org/NewXMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/NewXMLSchema way4j/tools/systemBuild/systemDefinitions.xsd ">
-	
+<system xmlns="http://www.example.org/NewXMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/NewXMLSchema way4j/tools/systemBuild/systemConfig.xsd ">
+
 	<configurations systemName="testApp">
 		
 		<dataSource user="postgresql" url="jdbc:postgresql://localhost:5432/idws_service_1" password="postgresql" driver="org.postgresql.Driver">
 			<hibernateProps>
-				 <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+				 <prop name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
 			</hibernateProps>
 		</dataSource>
 		
@@ -20,8 +20,31 @@
 		
 	</configurations>
 	
-	<models>
-		<model></model>
-	</models>
+	<modules>
+		<module name="Usuario">
+			<bean name="Usuario" table="M_USUARIO" type="M">
+				
+				<links>
+					<link name="bloqueados" url="this.grid" filter="{c:{f:'BLOQUEADO',o:'=',v:'T'}}"/>
+					<link name="deletados" url="this.grid" filter="{c:{f:'DELETADO',o:'=',v:'T'}}"/>
+				</links>
+				
+				<grid defaultButtons="{insert:{}, update:{}}">
+					<button name="bloquearTodosuUsuarios" call="application.controllers.UsuarioController.bloqueiaTodosUsuarios"/>
+				</grid>
+				
+				<property name="ID_USUARIO" type="Integer" primaryKey="true"/>
+				<property name="NOME" type="String" maxLength="50"/>
+				<property name="TELEFONE" type="String" maxLength="20"/>
+				<property name="ID_PAIS" type="Bean" service="LtPais"/>
+			</bean>
+			
+			<bean name="LtPais" type="A">
+				<property name="ID_PAIS" type="Integer" primaryKey="true"/>
+				<property name="NOME" type="String"/>
+			</bean>
+			
+		</module>
+	</modules>
 	
 </system>

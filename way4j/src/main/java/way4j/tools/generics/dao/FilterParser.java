@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Junction;
@@ -18,47 +19,60 @@ import org.json.JSONObject;
 
 
 /*
- [
-	{
-		filter:[
-					{
-						and:[
-								{c:{f:'',o:'',v:''}},
-								{c:{f:'nome',o:'=',v:'Djefferson'}}
-							]
-					}
-				]
-	},{
-		order:{
-			by:'', 
-			type:''
+ Formatos aceitos :
+ 
+ 1 - {c:{f:'',o:'',v:''}}
+ 2 - {or:[{c:{f:'',o:'',v:'', bean:''}}, {c:{f:'',o:'',v:''}}, {and:[{c:{f:'',o:'',v:''}}]}]}
+ 3 - [
+		{
+			filter:[
+						{
+							and:[
+									{c:{f:'',o:'',v:''}},
+									{c:{f:'nome',o:'=',v:'Djefferson'}}
+								]
+						}
+					]
+		},{
+			order:{
+				by:'', 
+				type:''
+			}
+		},{
+			range : {
+				min : '', max:''
+			}
 		}
-	},{
-		range : {
-			min : '', max:''
-		}
-	}
-]
+	]
  
 */
 
 public class FilterParser {
 	
-	private Map<String, Object> filterJoins;
+	private Map<String, JSONArray> filterJoins;
+	
+	public FilterParser(){
+		
+	}
 	
 	public SearchCriteria parseFilter(String filter){
 		try{
-			filterJoins = new HashMap<String, Object>();
+			filterJoins = new HashMap<String, JSONArray>();	
 			SearchCriteria filterResult = new SearchCriteria();
-			Map<String, SearchCriteria> joins = filterResult.getJoins();
 			
+			if(!GenericUtils.isJsonArray(""+filter)){
+				filter = "["+filter+"]";
+			}
+
 			JSONArray filterArray = new JSONArray(""+filter);
-			
-			JSONObject filterConfig = GenericUtils.searchJsonObject(filterArray, Constants.FilterConstants.FILTER);
-			JSONObject orderConfig = GenericUtils.searchJsonObject(filterArray, Constants.FilterConstants.Order.ORDER.value());
-			JSONObject rangeConfig = GenericUtils.searchJsonObject(filterArray, Constants.FilterConstants.RANGE);
+			JSONObject filterConfig = getFilterElement(filterArray); 
+			JSONObject orderConfig = searchElementInFilter(filterArray, Constants.FilterConstants.Order.ORDER.value(), true);
+			JSONObject rangeConfig = searchElementInFilter(filterArray, Constants.FilterConstants.RANGE, true);
 			
 			filterResult.setCriterion(parseFilter(""+filterConfig, null));
+			if(filterJoins != null){
+				processJoins(filterResult);
+			}
 			
 			if(orderConfig != null){
 				filterResult.setOrder(getOrderBy(orderConfig));
@@ -80,6 +94,14 @@ public class FilterParser {
 		return null;
 	}
 	
+	private void processJoins(SearchCriteria filterResult){
+		Map<String, JSONArray> joinsMap = new HashMap<String, JSONArray>(filterJoins); 
+		filterJoins = null;
+		for(Entry<String, JSONArray> jc : joinsMap.entrySet()){
+			filterResult.getJoins().put(jc.getKey(), parseFilter(""+jc.getValue(), null));
+		}
+	}
+	
 	public Criterion parseFilter(String filter, Constants.FilterConstants.GroupCondition groupType){
 		try {
 			
@@ -97,15 +119,24 @@ public class FilterParser {
 			for(int i=0;i<filterJson.length();i++){
 				JSONObject filterItem = filterJson.getJSONObject(i);
 				if(filterItem.has(Constants.FilterConstants.CONDITION)){
-					criterions.add(parseCondition(filterItem));
+					Criterion conditionCriterion = parseCondition(filterItem);
+					if(conditionCriterion != null){
+						criterions.add(parseCondition(filterItem));	
+					}
 				}else if(filterItem.has(Constants.FilterConstants.GroupCondition.AND.value())){
 					groupType = Constants.FilterConstants.GroupCondition.AND;
 					JSONArray andConditions = filterItem.getJSONArray(Constants.FilterConstants.GroupCondition.AND.value());
-					criterions.add(parseGroupConditions(andConditions,Constants.FilterConstants.GroupCondition.AND));
+					Criterion groupCondition = parseGroupConditions(andConditions,Constants.FilterConstants.GroupCondition.AND);
+					if(groupCondition != null){
+						criterions.add(groupCondition);
+					}
 				}else if(filterItem.has(Constants.FilterConstants.GroupCondition.OR.value())){
 					groupType = Constants.FilterConstants.GroupCondition.OR;
 					JSONArray orConditions = filterItem.getJSONArray(Constants.FilterConstants.GroupCondition.OR.value());
-					criterions.add(parseGroupConditions(orConditions,Constants.FilterConstants.GroupCondition.OR));
+					Criterion groupCondition = parseGroupConditions(orConditions,Constants.FilterConstants.GroupCondition.OR);
+					if(groupCondition != null){
+						criterions.add(groupCondition);	
+					}
 				}
 			}
 			
@@ -119,7 +150,7 @@ public class FilterParser {
 			for(Criterion c : criterions){
 				resultJunction.add(c);
 			}
-			return resultJunction;
+			return resultJunction.toString().equals("()") ? null : resultJunction;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -172,11 +203,14 @@ public class FilterParser {
 				if(groupConditions.getJSONObject(c).has(conditionType.value())){
 					groupConditionResult.add(parseFilter(""+groupConditions.getJSONObject(c).get(conditionType.value()), conditionType));
 				}else{
-					groupConditionResult.add(parseFilter(""+groupConditions.get(c), conditionType));
+					Criterion groupCondition = parseFilter(""+groupConditions.get(c), conditionType);
+					if(groupCondition != null){
+						groupConditionResult.add(groupCondition);	
+					}
 				}
 			}
 		}
-		return groupConditionResult;
+		return groupConditionResult.toString().equals("()") ? null : groupConditionResult;
 	}
 	
 	public Criterion parseCondition(JSONObject jsonCondition) throws JSONException{
@@ -186,7 +220,17 @@ public class FilterParser {
 		}
 		
 		if(jsonCondition.has(Constants.FilterConstants.BEAN)){
-			filterJoins.put(jsonCondition.getString(Constants.FilterConstants.BEAN), null);
+			String bean = ""+jsonCondition.get(Constants.FilterConstants.BEAN);
+			jsonCondition.put(Constants.FilterConstants.FIELD, bean+"."+jsonCondition.get(Constants.FilterConstants.FIELD));
+			jsonCondition.remove("bean");
+			if(filterJoins.get(bean) == null){
+				filterJoins.put(bean, new JSONArray("[{c:"+jsonCondition+"}]"));	
+			}else{
+				JSONArray joinConditions = new JSONArray(""+filterJoins.get(bean));
+				joinConditions.put(new JSONObject("{c:"+jsonCondition+"}"));
+				filterJoins.put(bean, joinConditions);
+			}
+			return null;
 		}
 		
 		String field = (String) jsonCondition.get(Constants.FilterConstants.FIELD);
@@ -275,12 +319,36 @@ public class FilterParser {
 		
 	}
 
-	public Map<String, Object> getFilterJoins() {
+	public Map<String, JSONArray> getFilterJoins() {
 		return filterJoins;
 	}
-
-	public void setFilterJoins(Map<String, Object> filterJoins) {
-		this.filterJoins = filterJoins;
+	
+	public static JSONObject getFilterElement(JSONArray jsonArray) throws JSONException{
+		JSONObject filterConfig = searchElementInFilter(jsonArray, Constants.FilterConstants.FILTER, true);
+		if(filterConfig == null){
+			filterConfig = searchElementInFilter(jsonArray, Constants.FilterConstants.GroupCondition.AND.value(), false);
+		}
+		if(filterConfig == null){
+			filterConfig =searchElementInFilter(jsonArray, Constants.FilterConstants.GroupCondition.OR.value(), false);
+		}
+		if(filterConfig == null){
+			filterConfig = searchElementInFilter(jsonArray, Constants.FilterConstants.CONDITION, false);
+		}
+		return filterConfig;
+	}
+	
+	public static JSONObject searchElementInFilter(JSONArray jsonArray, String key, boolean returnChild) throws JSONException{
+		for(int i=0;i<jsonArray.length();i++){
+			if(jsonArray.getJSONObject(i).has(key)){
+				if(returnChild){
+					return jsonArray.getJSONObject(i).getJSONObject(key);	
+				}else{
+					return jsonArray.getJSONObject(i);
+				}
+				
+			}
+		}
+		return null;
 	}
 	
 }

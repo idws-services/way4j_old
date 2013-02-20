@@ -14,7 +14,7 @@ public class XmlSysConfigConstants {
 	}
 	
 	public enum PackageLocations{
-		DAO("dao"), SERVICE("service"), CONTROLLER("controller"), VIEW("view"), LAZY_DATA_MODEL("lazyDataModel"), LOCATION("location");
+		DAO("dao"), SERVICE("service"), CONTROLLER("controller"), VIEW("view"), LAZY_DATA_MODEL("lazyDataModel"), LOCATION("location"),MODEL("model");
 		private PackageLocations(String v) {
 			value = v;
 		}

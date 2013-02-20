@@ -1,4 +1,4 @@
-package way4j.tools.defaultEntities;
+package way4j.tools.defaults.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

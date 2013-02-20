@@ -29,7 +29,6 @@ public class SystemParser {
 	
 	private Configurations configurations;
 	private XPath  xpathSysConfig;
-	private InputStream streamSysConfig;
 	private DeferredDocumentImpl docSysConfig;
 	
 	public SystemParser(){
@@ -39,13 +38,12 @@ public class SystemParser {
 	private void init(){
 		this.configurations = new Configurations();
 		this.xpathSysConfig  = XPathFactory.newInstance().newXPath();
-		this.streamSysConfig = this.getClass().getClassLoader().getResourceAsStream("systemConfig.xml");
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		docBuilderFactory.setNamespaceAware(false);
 		DocumentBuilder docBuilder = null;
 		try {
 			docBuilder = docBuilderFactory.newDocumentBuilder();
-			docSysConfig = (DeferredDocumentImpl) docBuilder.parse(streamSysConfig);
+			docSysConfig = (DeferredDocumentImpl) docBuilder.parse(this.getClass().getClassLoader().getResourceAsStream("systemConfig.xml"));
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {
@@ -75,7 +73,7 @@ public class SystemParser {
 	}
 	
 	public Properties configureHibernate(){
-		NodeList hibernatePropsNodes = (NodeList) queryInXmlSysConfig("//dataSource/hibernateProps/property", XPathConstants.NODESET);
+		NodeList hibernatePropsNodes = (NodeList) queryInXmlSysConfig("//dataSource/hibernateProps/prop", XPathConstants.NODESET);
 		Properties hibernateProps = getDefaultHibernateProperties();
 		for (int i = 0; i < hibernatePropsNodes.getLength(); i++) {
 			Node prop = hibernatePropsNodes.item(i);
@@ -97,6 +95,8 @@ public class SystemParser {
 		packageLocations.setView(element.getAttributes().getNamedItem(XmlSysConfigConstants.PackageLocations.LOCATION.getValue()).getNodeValue());
 		element = (Node) queryInXmlSysConfig("//resourceLocations/lazyDataModel", XPathConstants.NODE);
 		packageLocations.setLazyDataModel(element.getAttributes().getNamedItem(XmlSysConfigConstants.PackageLocations.LOCATION.getValue()).getNodeValue());
+		element = (Node) queryInXmlSysConfig("//resourceLocations/model", XPathConstants.NODE);
+		packageLocations.setModel(element.getAttributes().getNamedItem(XmlSysConfigConstants.PackageLocations.LOCATION.getValue()).getNodeValue());
 		configurations.setPackageLocations(packageLocations);
 		return packageLocations;
 	}
@@ -115,7 +115,7 @@ public class SystemParser {
 		props.put("hibernate.show_sql", "true");
 		props.put("hibernate.format_sql", "true");
 		props.put("hibernate.current_session_context_class", "thread");
-		props.put("hibernate.hbm2ddl.auto", "update");
+		props.put("hibernate.hbm2ddl.auto", "create");
 		props.put("hibernate.transaction.auto_close_session", "true");
 		props.put("hibernate.transaction.flush_before_completion", "true");
 		props.put("hibernate.connection.release_mode","after_transaction");

@@ -30,6 +30,18 @@
   		<param-value>classpath:way4j/tools/springConfig.xml</param-value>
 	</context-param>
 	
+	
+	<filter>
+		<filter-name>openSessionInViewFilter</filter-name>
+		<filter-class>way4j.tools.listeners.OpenSessionInViewFilter</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>openSessionInViewFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	
     <!-- 
   	<servlet>
 		<servlet-name>DispatcherServlet</servlet-name>

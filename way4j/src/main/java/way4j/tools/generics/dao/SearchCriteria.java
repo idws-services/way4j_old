@@ -8,12 +8,15 @@ import org.hibernate.criterion.Order;
 public class SearchCriteria {
 	
 	private Criterion criterion;
-	private Order order = null;
-	private Map<String, SearchCriteria> joins = new HashMap<String, SearchCriteria>();
-	
+	private Order order;
+	private Map<String, Criterion> joins;
 	private Integer start;
 	private Integer limit;
 
+	public SearchCriteria(){
+		joins = new HashMap<String, Criterion>();
+	}
+	
 	public Criterion getCriterion() {
 		return criterion;
 	}
@@ -26,10 +29,10 @@ public class SearchCriteria {
 	public void setOrder(Order order) {
 		this.order = order;
 	}
-	public Map<String, SearchCriteria> getJoins() {
+	public Map<String, Criterion> getJoins() {
 		return joins;
 	}
-	public void setJoins(Map<String, SearchCriteria> joins) {
+	public void setJoins(Map<String, Criterion> joins) {
 		this.joins = joins;
 	}
 	public Integer getStart() {

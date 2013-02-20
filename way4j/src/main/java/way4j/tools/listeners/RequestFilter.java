@@ -20,13 +20,19 @@ public class RequestFilter implements Filter{
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		if(JsonReflectionDispatcher.isJsonInjectRequest(request)){
-			JsonReflectionDispatcher.dispatch(request, response);
-		}else{
-			chain.doFilter(request, response);
-		}
+		chain.doFilter(request, response);
 	}
 
+	private boolean jsonRequest(ServletRequest request, ServletResponse response){
+		// Funcionalidade de requisições através de json, retornando um json como resultado, 
+		// está implementado apenas uma parte, e não é o foco no momento.
+		if(JsonReflectionDispatcher.isJsonInjectRequest(request)){
+			JsonReflectionDispatcher.dispatch(request, response);
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
 		

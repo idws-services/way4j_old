@@ -103,7 +103,7 @@ public class Constants {
 		NOT_IN("notin"),
 		STARTS_WITH("?%"),
 		ENDS_WITH("%?"),
-		STARTS_WITH_IGNORE_CASE("?%^"),
+		STARTS_WITH_IGNORE_CASE("?%"),
 		ENDS_WITH_IGNORE_CASE("%?^"),
 		CONTAINS("%?%"),
 		BETWEEN("><"),

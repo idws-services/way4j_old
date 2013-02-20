@@ -2,10 +2,13 @@ package way4j.tools.generics.dao;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Repository;
 
@@ -103,8 +106,8 @@ public class GenericDao<T extends Serializable> implements IGenericDao<T>{
 	public List<T> list(SearchCriteria filterCriteria) {
 		return loadFilterToCriteria(filterCriteria).list();
 	}
-	
-	private Criteria configureCriteriaByFilter(String filter){
+	 
+	protected Criteria configureCriteriaByFilter(String filter){
 		if(filter == null || filter.isEmpty()){
 			return createCriteria();
 		}else{
@@ -112,11 +115,19 @@ public class GenericDao<T extends Serializable> implements IGenericDao<T>{
 		}
 	}
 	
-	private Criteria loadFilterToCriteria(SearchCriteria filterResult){
+	protected Criteria loadFilterToCriteria(SearchCriteria filterResult){
 		Criteria criteria = createCriteria();
 
 		if(filterResult.getCriterion() != null){
 			criteria.add(filterResult.getCriterion());
+		}
+		if(filterResult.getJoins() != null){
+			for(Entry<String, Criterion> join : filterResult.getJoins().entrySet()){
+				criteria.createAlias(join.getKey(), join.getKey(), Criteria.LEFT_JOIN);
+				if(join.getValue() != null){
+					criteria.add(join.getValue());	
+				}
+			}
 		}
 		if(filterResult.getOrder() != null){
 			criteria.addOrder(filterResult.getOrder());
@@ -131,17 +142,17 @@ public class GenericDao<T extends Serializable> implements IGenericDao<T>{
 		return criteria;
 	}
 	
-	private Criteria createCriteria(){
+	protected Criteria createCriteria(){
 		return getSessionFactory().openSession().createCriteria(getTypeClass());
 	}
 	
-	private Session startTransaction(){
+	protected Session startTransaction(){
 		Session session = getSession();
 		session.beginTransaction();
 		return session;
 	}
 	
-	private void finishTransaction(Session session){
+	protected void finishTransaction(Session session){
 		session.getTransaction().commit();
 	}
 	

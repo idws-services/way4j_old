@@ -1,4 +1,4 @@
-package way4j.tools.defaultEntities;
+package way4j.tools.defaults.model;
 
 import java.util.List;
 

@@ -1,11 +1,5 @@
 package way4j.tools.utils;
 
-import way4j.tools.systemBuild.SystemBuilder;
-import way4j.tools.systemBuild.xmlParser.PackageLocations;
-import way4j.tools.systemBuild.xmlParser.SystemParser;
-import way4j.tools.systemDefinitions.IApplicationConfig;
-import way4j.tools.utils.constants.Constants;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -16,6 +10,10 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+
+import way4j.tools.systemBuild.xmlParser.PackageLocations;
+import way4j.tools.systemBuild.xmlParser.SystemParser;
+import way4j.tools.utils.constants.Constants;
 
 public class ClassUtils {
 	
@@ -137,19 +135,6 @@ public class ClassUtils {
 			return true;
 		} catch (ClassNotFoundException e) {}
 		return false;
-	}
-	
-	public static IApplicationConfig getApplicationConfigInstance(){
-		try {
-			return (IApplicationConfig) Class.forName("ApplicationConfig").newInstance();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 	
 }

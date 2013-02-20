@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/NewXMLSchema" xmlns:w="http://www.example.org/NewXMLSchema" elementFormDefault="qualified">
+
+<element name="system">
+	<complexType>
+		<choice maxOccurs="unbounded" minOccurs="0">
+			<element name="configurations">
+				<complexType mixed="true">
+					<choice minOccurs="0" maxOccurs="unbounded">
+						<element name="dataSource">
+							<complexType>
+								<choice maxOccurs="unbounded" minOccurs="0">
+									<element name="hibernateProps">
+										<complexType>
+											<choice maxOccurs="unbounded" minOccurs="0">
+												<element ref="w:prop"/>
+											</choice>
+										</complexType>
+									</element>
+								</choice>
+								<attribute name="user" use="required"/>
+								<attribute name="password" use="required"/>
+								<attribute name="url" use="required"/>
+								<attribute name="driver" use="required"/>
+							</complexType>
+						</element>
+						
+						<element name="resourceLocations">
+							<complexType>
+								 <choice minOccurs="6" maxOccurs="6">
+									<element name="model">
+								 		<complexType>
+								 			<attribute name="location" use="required"/>
+								 		</complexType>
+								 	</element>
+								 	<element name="controller">
+								 		<complexType>
+								 			<attribute name="location" use="required"/>
+								 		</complexType>
+								 	</element>
+								 	<element name="dao">
+								 		<complexType>
+								 			<attribute name="location" use="required"/>
+								 		</complexType>
+								 	</element>
+								 	<element name="service">
+								 		<complexType>
+								 			<attribute name="location" use="required"/>
+								 		</complexType>
+								 	</element>
+								 	<element name="lazyDataModel">
+								 		<complexType>
+								 			<attribute name="location" use="required"/>
+								 		</complexType>
+								 	</element>
+								 	<element name="view">
+								 		<complexType>
+								 			<attribute name="location" use="required"/>
+								 		</complexType>
+								 	</element>
+								 </choice>
+							</complexType>
+						</element>
+						
+					</choice>
+					<attribute name="systemName"/>
+				</complexType>
+			</element>
+			<element name="modules">
+				<complexType>
+					<choice maxOccurs="unbounded" minOccurs="0">
+						<element name="module">
+							<complexType>
+								<choice minOccurs="0" maxOccurs="unbounded">
+									<element name="bean">
+										<complexType>
+											<choice maxOccurs="unbounded" minOccurs="0">
+												<element ref="w:property"></element>
+												<element name="links">
+													<complexType>
+														<choice maxOccurs="unbounded" minOccurs="0">
+															<element name="link">
+																<complexType>
+																	<attribute name="name"></attribute>
+																	<attribute name="url"></attribute>
+																	<attribute name="filter"></attribute>
+																</complexType>
+															</element>
+														</choice>
+													</complexType>
+												</element>
+												<element name="grid">
+													<complexType>
+														<choice maxOccurs="unbounded" minOccurs="0">
+															<element name="button">
+																<complexType>
+																	<attribute name="name"></attribute>
+																	<attribute name="method"></attribute>
+																	<attribute name="call"></attribute>
+																	<attribute name="refresh"></attribute>
+																	<attribute name="showWhenExpression"></attribute>
+																</complexType>
+															</element>
+														</choice>
+														<attribute name="defaultButtons"></attribute>
+													</complexType>
+												</element>
+											</choice>
+											<attribute name="name" use="required"></attribute>
+											<attribute name="table"></attribute>
+											<attribute name="windowSizesCrud"></attribute>
+											<attribute name="type">
+												<simpleType>
+													<restriction base="string">
+														<enumeration value="M"></enumeration>
+														<enumeration value="D"></enumeration>
+														<enumeration value="A"></enumeration>
+													</restriction>
+												</simpleType>
+											</attribute>
+											<attribute name="master"></attribute>
+										</complexType>
+									</element>
+								</choice>
+								<attribute name="name"></attribute>
+							</complexType>
+						</element>
+					</choice>
+				</complexType>		
+			</element>
+		</choice>
+	</complexType>
+</element>
+
+<!-- Elementos para herança : -->
+
+<element name="prop">
+	<complexType>
+		<attribute name="name" use="required"/>
+		<attribute name="value" use="required"/>
+	</complexType>
+</element>
+
+<element name="property">
+	<complexType>
+		<attribute name="name" use="required"></attribute>
+		<attribute name="defaultValue"></attribute>
+		<attribute name="showWhenExpression"></attribute>
+		<attribute name="maxLength"></attribute>
+		<attribute name="service"></attribute>
+		<attribute name="primaryKey">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="true"></enumeration>
+					<enumeration value="false"></enumeration>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="foreignKey">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="true"></enumeration>
+					<enumeration value="false"></enumeration>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="type" use="required">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="String"></enumeration>
+					<enumeration value="Integer"></enumeration>
+					<enumeration value="Double"></enumeration>
+					<enumeration value="Char"></enumeration>
+					<enumeration value="Boolean"></enumeration>
+					<enumeration value="Date"></enumeration>
+					<enumeration value="Bean"></enumeration>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+</element>
+    
+</schema>

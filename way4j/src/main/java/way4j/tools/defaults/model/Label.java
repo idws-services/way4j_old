@@ -1,4 +1,4 @@
-package way4j.tools.defaultEntities;
+package way4j.tools.defaults.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,25 +11,18 @@ import javax.persistence.Table;
 
 @Table
 @Entity
-public class User {
+public class Label {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	private Long id;
 	
-	@Column
-	private String login;
-	
-	@Column
-	private String senha;
-	
 	@OneToOne
 	@JoinColumn(name="id_language")
 	private Language language;
 	
-	@OneToOne
-	@JoinColumn(name="idprofile")
-	private Profile profile;
+	@Column
+	private String value;
 
 	public Long getId() {
 		return id;
@@ -37,22 +30,6 @@ public class User {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getLogin() {
-		return login;
-	}
-
-	public void setLogin(String login) {
-		this.login = login;
-	}
-
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
 	}
 
 	public Language getLanguage() {
@@ -63,12 +40,12 @@ public class User {
 		this.language = language;
 	}
 
-	public Profile getProfile() {
-		return profile;
+	public String getValue() {
+		return value;
 	}
 
-	public void setProfile(Profile profile) {
-		this.profile = profile;
+	public void setValue(String value) {
+		this.value = value;
 	}
 	
 }

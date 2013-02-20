@@ -1,18 +1,22 @@
-package way4j.tools.defaultEntities;
+package way4j.tools.defaults.model;
+
+import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Table
 @Entity
-public class Language {
+public class Language implements Serializable{
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="lang_seq")
+	@SequenceGenerator(name="lang_seq", sequenceName="lang_seq", initialValue=1)
 	private Long id;
 	
 	@Column(length=50, nullable=false)
