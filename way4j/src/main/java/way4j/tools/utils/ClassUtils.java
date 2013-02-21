@@ -11,13 +11,13 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Id;
 
-import way4j.tools.systemBuild.xmlParser.PackageLocations;
+import way4j.tools.systemBuild.xmlModel.ResourceLocations;
 import way4j.tools.systemBuild.xmlParser.SystemParser;
 import way4j.tools.utils.constants.Constants;
 
 public class ClassUtils {
 	
-	private static PackageLocations packageLocations;
+	private static ResourceLocations packageLocations;
 	
 	static {
 		packageLocations = new SystemParser().configurePackageLocations();

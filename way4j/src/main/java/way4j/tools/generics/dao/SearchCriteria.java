@@ -9,12 +9,15 @@ public class SearchCriteria {
 	
 	private Criterion criterion;
 	private Order order;
-	private Map<String, Criterion> joins;
+	private Map<String, String> joins;
+	//private Map<String, SearchCriteria> subQueries;
 	private Integer start;
 	private Integer limit;
-
+	
+	
 	public SearchCriteria(){
-		joins = new HashMap<String, Criterion>();
+		joins = new HashMap<String, String>();
+		//subQueries = new HashMap<String, SearchCriteria>();
 	}
 	
 	public Criterion getCriterion() {
@@ -29,10 +32,10 @@ public class SearchCriteria {
 	public void setOrder(Order order) {
 		this.order = order;
 	}
-	public Map<String, Criterion> getJoins() {
+	public Map<String, String> getJoins() {
 		return joins;
 	}
-	public void setJoins(Map<String, Criterion> joins) {
+	public void setJoins(Map<String, String> joins) {
 		this.joins = joins;
 	}
 	public Integer getStart() {
@@ -47,4 +50,12 @@ public class SearchCriteria {
 	public void setLimit(Integer limit) {
 		this.limit = limit;
 	}
+
+	/*public Map<String, SearchCriteria> getSubQueries() {
+		return subQueries;
+	}
+
+	public void setSubQueries(Map<String, SearchCriteria> subQueries) {
+		this.subQueries = subQueries;
+	}*/
 }

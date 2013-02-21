@@ -1,11 +1,5 @@
 package way4j.tools.generics.controller;
 
-import way4j.tools.generics.lazyDataModel.GenericLazyDataModel;
-import way4j.tools.generics.service.GenericService;
-import way4j.tools.generics.service.IGenericService;
-import way4j.tools.utils.ClassUtils;
-import way4j.tools.utils.GenericUtils;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -14,8 +8,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.primefaces.component.behavior.ajax.AjaxBehavior;
 import org.springframework.beans.BeansException;
+
+import way4j.tools.generics.lazyDataModel.GenericLazyDataModel;
+import way4j.tools.generics.service.IGenericService;
+import way4j.tools.utils.ClassUtils;
+import way4j.tools.utils.GenericUtils;
 
 public class GenericController<T extends Serializable> implements IGenericController<T> {
 	

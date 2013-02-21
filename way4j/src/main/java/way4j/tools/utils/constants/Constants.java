@@ -1,5 +1,7 @@
 package way4j.tools.utils.constants;
 
+import org.hibernate.Criteria;
+
 public class Constants {
 	
 	public static String CONTROLLER_SUFIX = "Controller";
@@ -36,11 +38,12 @@ public class Constants {
 	public static class FilterConstants{
 		
 		public static final String CONDITION = "c";
-		public static final String JOIN_CONDITION = "jc";
+		public static final String JOIN = "join";
+		public static final String TYPE = "type";
 		public static final String FIELD = "f";
 		public static final String OPERATOR = "o";
 		public static final String FILTER = "filter";
-		public static final String WHERE = "where";
+		//public static final String WHERE = "where";
 		public static final String BEAN = "bean";
 		public static final String RANGE = "range";
 		
@@ -51,9 +54,22 @@ public class Constants {
 		public static final String ASC = "asc";
 		public static final String DESC = "desc";
 		
+		public enum JoinTypes{
+			
+			INNER("inner"), LEFT("left"), FULL("full");
+			
+			String value;
+			JoinTypes(String value) {
+				this.value = value;
+			}
+			public String value(){
+				return this.value;
+			}
+		}
+		
 		public enum Order{
 			
-			ORDER("order"), BY("by"), TYPE("");
+			ORDER("order"), BY("by");
 			
 			String value;
 			Order(String value) {

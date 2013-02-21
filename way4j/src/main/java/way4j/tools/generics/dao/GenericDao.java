@@ -5,24 +5,26 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
-import org.springframework.stereotype.Repository;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Subqueries;
+import org.hibernate.impl.CriteriaImpl.Subcriteria;
 
+import way4j.application.model.Pessoa;
 import way4j.tools.utils.GenericUtils;
+import way4j.tools.utils.constants.Constants;
 
-@Repository
 public class GenericDao<T extends Serializable> implements IGenericDao<T>{
 
-	private FilterParser filterParser = new FilterParser();
+	private FilterParser filterParser;
 	private Class<T> typeClass;
 	private SessionFactory sessionFactory;
 	
 	public GenericDao(){
-		
+		 filterParser = new FilterParser();
 	}
 	
 	private Class<T> getTypeClass(){
@@ -117,18 +119,22 @@ public class GenericDao<T extends Serializable> implements IGenericDao<T>{
 	
 	protected Criteria loadFilterToCriteria(SearchCriteria filterResult){
 		Criteria criteria = createCriteria();
-
 		if(filterResult.getCriterion() != null){
 			criteria.add(filterResult.getCriterion());
 		}
-		if(filterResult.getJoins() != null){
-			for(Entry<String, Criterion> join : filterResult.getJoins().entrySet()){
-				criteria.createAlias(join.getKey(), join.getKey(), Criteria.LEFT_JOIN);
-				if(join.getValue() != null){
-					criteria.add(join.getValue());	
-				}
+		if(filterResult.getJoins() != null && !filterResult.getJoins().isEmpty()){
+			for(Entry<String, String> join : filterResult.getJoins().entrySet()){
+				criteria.createAlias(join.getKey(), join.getValue(), getJoinType(join.getValue()));
 			}
 		}
+		/*if(filterResult.getSubQueries() != null && !filterResult.getSubQueries().isEmpty()){
+			for(Entry<String, SearchCriteria> subQuery : filterResult.getSubQueries().entrySet()){
+				Criteria subCriteria = criteria.createCriteria(subQuery.getKey());
+				//subCriteria.add(subQuery.getValue().getCriterion());
+				criteria.createAlias(subQuery.getKey(), subQuery.getKey());
+				subCriteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+			}
+		}*/
 		if(filterResult.getOrder() != null){
 			criteria.addOrder(filterResult.getOrder());
 		}
@@ -138,8 +144,18 @@ public class GenericDao<T extends Serializable> implements IGenericDao<T>{
 		if(filterResult.getLimit() != null){
 			criteria.setMaxResults(filterResult.getLimit());
 		}
-		
 		return criteria;
+	}
+	
+	protected int getJoinType(String join){
+		if(join != null){
+			if(join.equals(Constants.FilterConstants.JoinTypes.FULL.value())){
+				return Criteria.FULL_JOIN;
+			}else if(join.equals(Constants.FilterConstants.JoinTypes.INNER.value())){
+				return Criteria.INNER_JOIN;
+			}
+		}
+		return Criteria.LEFT_JOIN;
 	}
 	
 	protected Criteria createCriteria(){

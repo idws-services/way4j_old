@@ -1,4 +1,4 @@
-package way4j.tools.systemBuild.xmlParser;
+package way4j.tools.systemBuild.xmlModel;
 
 import java.util.Properties;
 
@@ -9,7 +9,7 @@ public class Configurations {
 	
 	private Properties hibernateProperties;
 	private DriverManagerDataSource dataSource;
-	private PackageLocations packageLocations;
+	private ResourceLocations resourceLocations;
 	
 	public Properties getHibernateProperties() {
 		return hibernateProperties;
@@ -23,11 +23,11 @@ public class Configurations {
 	public void setDataSource(DriverManagerDataSource dataSource) {
 		this.dataSource = dataSource;
 	}
-	public PackageLocations getPackageLocations() {
-		return packageLocations;
+	public ResourceLocations getResourceLocations() {
+		return resourceLocations;
 	}
-	public void setPackageLocations(PackageLocations packageLocations) {
-		this.packageLocations = packageLocations;
-	}	
+	public void setResourceLocations(ResourceLocations resourceLocations) {
+		this.resourceLocations = resourceLocations;
+	}
 	
 }

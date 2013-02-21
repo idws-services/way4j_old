@@ -22,21 +22,13 @@
 	
 	<modules>
 		<module name="Usuario">
-			<bean name="Usuario" table="M_USUARIO" type="M">
+			
+			<bean name="Usuario" table="m_usuario" type="M">
 				
-				<links>
-					<link name="bloqueados" url="this.grid" filter="{c:{f:'BLOQUEADO',o:'=',v:'T'}}"/>
-					<link name="deletados" url="this.grid" filter="{c:{f:'DELETADO',o:'=',v:'T'}}"/>
-				</links>
-				
-				<grid defaultButtons="{insert:{}, update:{}}">
-					<button name="bloquearTodosuUsuarios" call="application.controllers.UsuarioController.bloqueiaTodosUsuarios"/>
-				</grid>
-				
-				<property name="ID_USUARIO" type="Integer" primaryKey="true"/>
-				<property name="NOME" type="String" maxLength="50"/>
-				<property name="TELEFONE" type="String" maxLength="20"/>
-				<property name="ID_PAIS" type="Bean" service="LtPais"/>
+				<property name="id_usuario" type="Integer" primaryKey="true" manyToManyTable="mm_qqr_coisa" service="Algum"/>
+				<property name="nome" type="String" maxLength="50"/>
+				<property name="telefone" type="String" maxLength="20"/>
+				<property name="id_pais" type="Bean" service="LtPais"/>
 			</bean>
 			
 			<bean name="LtPais" type="A">

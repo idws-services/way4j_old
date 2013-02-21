@@ -1,4 +1,4 @@
-package way4j.application.model;
+package way4j.tools.defaults.model;
 
 import java.io.Serializable;
 
@@ -7,49 +7,36 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import way4j.tools.utils.GenericUtils;
 
+@Table
 @Entity
-@Table(name="pessoa")
-public class Pessoa implements Serializable{
+public class Curso implements Serializable{
 	
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="curso_seq")
+	@SequenceGenerator(initialValue=1, name="curso_seq", sequenceName="curso_seq" )
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
-	private Long idPessoa;
+	private long idCurso;
 	
 	@Column
 	private String nome;
 	
-	@Column
-	private String telefone;
-
-	public Long getIdPessoa() {
-		return idPessoa;
+	public long getIdCurso() {
+		return idCurso;
 	}
-
-	public void setIdPessoa(Long idPessoa) {
-		this.idPessoa = idPessoa;
+	public void setIdCurso(long idCurso) {
+		this.idCurso = idCurso;
 	}
-	
 	public String getNome() {
 		return nome;
 	}
-
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-
-	public String getTelefone() {
-		return telefone;
-	}
-
-	public void setTelefone(String telefone) {
-		this.telefone = telefone;
-	}
-
+	
 	@Override
 	public String toString(){
 		return GenericUtils.gson.toJson(this);

@@ -106,6 +106,7 @@
 													</complexType>
 												</element>
 											</choice>
+											<attribute name="extendsBean"/>
 											<attribute name="name" use="required"></attribute>
 											<attribute name="table"></attribute>
 											<attribute name="windowSizesCrud"></attribute>
@@ -143,11 +144,15 @@
 
 <element name="property">
 	<complexType>
+		<choice maxOccurs="unbounded" minOccurs="0">
+			<element ref="w:property"/>
+		</choice>
 		<attribute name="name" use="required"></attribute>
 		<attribute name="defaultValue"></attribute>
 		<attribute name="showWhenExpression"></attribute>
 		<attribute name="maxLength"></attribute>
 		<attribute name="service"></attribute>
+		<attribute name="manyToManyTable"></attribute>
 		<attribute name="primaryKey">
 			<simpleType>
 				<restriction base="string">
@@ -161,6 +166,14 @@
 				<restriction base="string">
 					<enumeration value="true"></enumeration>
 					<enumeration value="false"></enumeration>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="fetch">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="eager"/>
+					<enumeration value="lazy"/>
 				</restriction>
 			</simpleType>
 		</attribute>

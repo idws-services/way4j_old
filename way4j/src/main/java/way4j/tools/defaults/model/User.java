@@ -1,6 +1,7 @@
 package way4j.tools.defaults.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -35,6 +38,10 @@ public class User implements Serializable{
 	@OneToOne
 	@JoinColumn(name="id_profile")
 	private Profile profile;
+
+	@ManyToMany
+	@JoinTable(joinColumns=@JoinColumn(name="idUsuario"), inverseJoinColumns=@JoinColumn(name="idCurso"), name="mm_usuario_curso")
+	private List<Curso> cursos;
 
 	public Long getId() {
 		return id;
@@ -74,6 +81,14 @@ public class User implements Serializable{
 
 	public void setProfile(Profile profile) {
 		this.profile = profile;
+	}
+
+	public List<Curso> getCursos() {
+		return cursos;
+	}
+
+	public void setCursos(List<Curso> cursos) {
+		this.cursos = cursos;
 	}
 	
 }

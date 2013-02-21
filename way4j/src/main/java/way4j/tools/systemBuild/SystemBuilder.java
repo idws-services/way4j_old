@@ -12,7 +12,7 @@ import org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBea
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import way4j.tools.systemBuild.xmlParser.Configurations;
+import way4j.tools.systemBuild.xmlModel.Configurations;
 import way4j.tools.systemBuild.xmlParser.SystemParser;
 import way4j.tools.utils.GenericUtils;
 
@@ -38,7 +38,7 @@ public class SystemBuilder {
 	
 	public void configureApplication(ServletContext servletContext){
 		GenericApplicationContext applicationContext = new GenericApplicationContext(WebApplicationContextUtils.getWebApplicationContext(servletContext));
-		configurations = applicationContext.getBean(SystemParser.class).getConfigurations();
+		configurations = applicationContext.getBean(SystemParser.class).getSystem().getConfigurations();
 		
 		// Gerar Controllers, Service, Daos...
 		
@@ -51,7 +51,7 @@ public class SystemBuilder {
 		if(sessionFactory == null){
 			AnnotationSessionFactoryBean annotationSessionFactory = new AnnotationSessionFactoryBean();
 			annotationSessionFactory.setDataSource(getDataSource());
-			annotationSessionFactory.setPackagesToScan(new String[]{configurations.getPackageLocations().getModel(), "way4j.tools.defaults.model"});
+			annotationSessionFactory.setPackagesToScan(new String[]{configurations.getResourceLocations().getModel(), "way4j.tools.defaults.model"});
 			annotationSessionFactory.setHibernateProperties(configurations.getHibernateProperties());
 			try {
 				// O método é protected, por isso a necessidade de utilizar reflection

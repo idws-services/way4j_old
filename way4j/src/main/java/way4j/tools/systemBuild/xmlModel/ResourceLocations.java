@@ -1,6 +1,6 @@
-package way4j.tools.systemBuild.xmlParser;
+package way4j.tools.systemBuild.xmlModel;
 
-public class PackageLocations {
+public class ResourceLocations {
 
 	private String dao;
 	private String service;
@@ -9,9 +9,9 @@ public class PackageLocations {
 	private String lazyDataModel;
 	private String view;
 	
-	public PackageLocations(){}
+	public ResourceLocations(){}
 	
-	public PackageLocations(String dao, String service, String controller,String model, String lazyDataModel, String view) {
+	public ResourceLocations(String dao, String service, String controller,String model, String lazyDataModel, String view) {
 		this.dao = dao;
 		this.service = service;
 		this.controller = controller;

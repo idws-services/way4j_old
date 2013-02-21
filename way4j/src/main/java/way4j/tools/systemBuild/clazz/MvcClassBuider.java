@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import way4j.tools.systemBuild.xmlParser.PackageLocations;
+import way4j.tools.systemBuild.xmlModel.ResourceLocations;
 import way4j.tools.systemBuild.xmlParser.SystemParser;
 import way4j.tools.utils.ClassUtils;
 import way4j.tools.utils.GenericUtils;
@@ -15,7 +15,7 @@ import com.sun.org.apache.xpath.internal.NodeSet;
 public class MvcClassBuider {
 	
 	private static MvcClassBuider instance;
-	private static PackageLocations packageLocations;
+	private static ResourceLocations packageLocations;
 	private static Map<String,Class> singletonClasses;
 	
 	private MvcClassBuider(){}
@@ -30,7 +30,7 @@ public class MvcClassBuider {
 	
 	private static void init(){
 		singletonClasses = new HashMap<String, Class>();
-		packageLocations = GenericUtils.springContext.getBean(SystemParser.class).getConfigurations().getPackageLocations();
+		packageLocations = GenericUtils.springContext.getBean(SystemParser.class).getSystem().getConfigurations().getResourceLocations();
 	}
 	
 	public void buildMvc(){
@@ -130,11 +130,11 @@ public class MvcClassBuider {
 		return classStr.toString();
 	}
 
-	public PackageLocations getPackageLocations() {
+	public ResourceLocations getPackageLocations() {
 		return packageLocations;
 	}
 
-	public void setPackageLocations(PackageLocations packageLocations) {
+	public void setPackageLocations(ResourceLocations packageLocations) {
 		this.packageLocations = packageLocations;
 	}
 
