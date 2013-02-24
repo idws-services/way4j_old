@@ -83,8 +83,9 @@ public class ContextListener implements ServletContextListener{
 		// examplo trazendo os usuários que estão não estão cursando Geografia ( sRelacionamento MM )
 		userDao.list("[{" +
 							"or:[" +
-									"{c:{f:'cursos.nome', o:'<>', v:'Geografia'}},"+
-									"{c:{f:'cursos.nome', o:'=', v:'Marketing'}}"+
+									"{c:{f:'cursos.nome', o:'<>', v:'Engenharia'}},"+
+									"{c:{f:'cursos.nome', o:'=', v:'Marketing'}},"+
+									"{c:{f:'login', o:'=', v:'Maria'}}"+
 							"]" +
 						"}]");
 		
