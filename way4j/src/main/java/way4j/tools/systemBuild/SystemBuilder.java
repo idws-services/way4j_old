@@ -5,6 +5,7 @@ import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
+import org.dom4j.jaxb.JAXBReader;
 import org.hibernate.SessionFactory;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -24,15 +25,11 @@ public class SystemBuilder {
 	public SessionFactory sessionFactory;
 	private static Configurations configurations;
 	
-	static {
-		init();
-	}
-	
 	public SystemBuilder(){
 		init();
 	}
 	
-	private static void init(){
+	private void init(){
 		
 	}
 	
@@ -42,7 +39,7 @@ public class SystemBuilder {
 		
 		// Gerar Controllers, Service, Daos...
 		
-		applicationContext.getBeanFactory().registerSingleton("dataSource", getDataSource());
+		applicationContext.getBeanFactory().registerSingleton("dataSource", configurations.getDataSource());
 		applicationContext.getBeanFactory().registerSingleton("sessionFactory", getSessionFactory());
 		GenericUtils.setApplicationContext(applicationContext);
 	}
@@ -50,7 +47,7 @@ public class SystemBuilder {
 	public SessionFactory getSessionFactory(){
 		if(sessionFactory == null){
 			AnnotationSessionFactoryBean annotationSessionFactory = new AnnotationSessionFactoryBean();
-			annotationSessionFactory.setDataSource(getDataSource());
+			annotationSessionFactory.setDataSource(configurations.getDataSource());
 			annotationSessionFactory.setPackagesToScan(new String[]{configurations.getResourceLocations().getModel(), "way4j.tools.defaults.model"});
 			annotationSessionFactory.setHibernateProperties(configurations.getHibernateProperties());
 			try {
@@ -65,10 +62,6 @@ public class SystemBuilder {
 			}			
 		}
 		return sessionFactory;
-	}
-	
-	public static DriverManagerDataSource getDataSource(){
-		return configurations.getDataSource();
 	}
 	
 }

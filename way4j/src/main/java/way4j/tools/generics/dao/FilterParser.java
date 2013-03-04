@@ -230,38 +230,6 @@ public class FilterParser{
 		return groupConditionResult.toString().equals("()") ? null : groupConditionResult;
 	}
 	
-	public JSONArray compileGroupConditions(JSONArray groupConditions, Constants.FilterConstants.GroupCondition groupType) throws JSONException{
-		// TODO o compilador deve levar em consideração, o operador, por causa das condições criados no parseCondition
-		Map<String, String> fieldsCompiled = new HashMap<String, String>();
-		List<String> normalFields = new ArrayList<String>();
-		for(int i=0;i<groupConditions.length();i++){
-			String field = groupConditions.getJSONObject(i).getJSONObject(Constants.FilterConstants.CONDITION).getString(Constants.FilterConstants.FIELD);
-			if(field.contains(".") 
-					&& !groupConditions.getJSONObject(i).get(Constants.FilterConstants.OPERATOR).equals(Constants.Operators.NOT_IN.value())
-					&& !groupConditions.getJSONObject(i).get(Constants.FilterConstants.OPERATOR).equals(Constants.Operators.NOT_EQUALS.value())){
-				
-				if(fieldsCompiled.containsKey(field)){
-					JSONArray oldConditions = new JSONArray(fieldsCompiled.get(field));
-					oldConditions.put(groupConditions.getJSONObject(i));
-					fieldsCompiled.put(field, ""+oldConditions);
-				}else{
-					fieldsCompiled.put(field, "["+groupConditions.getJSONObject(i)+"]");
-				}
-			}else{
-				normalFields.add(""+groupConditions.get(i));
-			}
-		}
-		JSONArray newGroupConditions = new JSONArray();
-		
-		for(Entry<String, String> c : fieldsCompiled.entrySet()){
-			newGroupConditions.put(new JSONObject("{c:{f:'"+c.getKey()+"',filter:[{"+groupType.value()+":"+c.getValue()+"}]}}"));
-		}
-		for(String c : normalFields){
-			newGroupConditions.put(new JSONObject(c));
-		}
-		return newGroupConditions;
-	}
-	
 	public Criterion parseCondition(JSONObject jsonCondition, Constants.FilterConstants.GroupCondition groupType, boolean parseJoin) throws JSONException, SecurityException, NoSuchFieldException, ClassNotFoundException{
 		
 		if(jsonCondition.has(Constants.FilterConstants.CONDITION)){
@@ -469,6 +437,43 @@ public class FilterParser{
 	
 	public void setTypeClass(Class c){
 		this.typeClass = c;
+	}
+	
+	public static class FilterCompiler{
+		
+		public static void compileGroupCondition(JSONArray groupConditions, Constants.FilterConstants.GroupCondition groupType) throws JSONException{
+
+			// TODO o compilador deve levar em consideração, o operador, por causa das condições criados no parseCondition
+			// e está condiderando o campo para compilar, deve considera tudo menos o ultimo campo fatiando por "\\."
+			Map<String, String> fieldsCompiled = new HashMap<String, String>();
+			List<String> normalFields = new ArrayList<String>();
+			for(int i=0;i<groupConditions.length();i++){
+				String field = groupConditions.getJSONObject(i).getJSONObject(Constants.FilterConstants.CONDITION).getString(Constants.FilterConstants.FIELD);
+				if(field.contains(".") 
+						&& !groupConditions.getJSONObject(i).get(Constants.FilterConstants.OPERATOR).equals(Constants.Operators.NOT_IN.value())
+						&& !groupConditions.getJSONObject(i).get(Constants.FilterConstants.OPERATOR).equals(Constants.Operators.NOT_EQUALS.value())){
+					if(fieldsCompiled.containsKey(field)){
+						JSONArray oldConditions = new JSONArray(fieldsCompiled.get(field));
+						oldConditions.put(groupConditions.getJSONObject(i));
+						fieldsCompiled.put(field, ""+oldConditions);
+					}else{
+						fieldsCompiled.put(field, "["+groupConditions.getJSONObject(i)+"]");
+					}
+				}else{
+					normalFields.add(""+groupConditions.get(i));
+				}
+			}
+			JSONArray newGroupConditions = new JSONArray();
+			
+			for(Entry<String, String> c : fieldsCompiled.entrySet()){
+				newGroupConditions.put(new JSONObject("{c:{f:'"+c.getKey()+"',filter:[{"+groupType.value()+":"+c.getValue()+"}]}}"));
+			}
+			for(String c : normalFields){
+				newGroupConditions.put(new JSONObject(c));
+			}
+			groupConditions = newGroupConditions;			
+		}
+		
 	}
 	
 }

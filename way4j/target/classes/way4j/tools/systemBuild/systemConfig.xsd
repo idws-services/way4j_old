@@ -187,6 +187,13 @@
 					<enumeration value="Boolean"></enumeration>
 					<enumeration value="Date"></enumeration>
 					<enumeration value="Bean"></enumeration>
+					
+					<enumeration value="Bean[]"></enumeration>
+					<enumeration value="String[]"></enumeration>
+					<enumeration value="Char[]"></enumeration>
+					<enumeration value="Boolean[]"></enumeration>
+					<enumeration value="Date[]"></enumeration>
+					<enumeration value="Integer[]"></enumeration>
 				</restriction>
 			</simpleType>
 		</attribute>

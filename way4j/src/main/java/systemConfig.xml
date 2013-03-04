@@ -25,7 +25,7 @@
 			
 			<bean name="Usuario" table="m_usuario" type="M">
 				
-				<property name="id_usuario" type="Integer" primaryKey="true" manyToManyTable="mm_qqr_coisa" service="Algum"/>
+				<property name="id_usuario" type="Bean[]" primaryKey="true" manyToManyTable="mm_qqr_coisa" service="Algum"/>
 				<property name="nome" type="String" maxLength="50"/>
 				<property name="telefone" type="String" maxLength="20"/>
 				<property name="id_pais" type="Bean" service="LtPais"/>
