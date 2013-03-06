@@ -113,7 +113,7 @@ public class GenericDao<T extends Serializable> implements IGenericDao<T>{
 			criteria.add(filterResult.getCriterion());
 		}
 		if(filterResult.getJoins() != null && !filterResult.getJoins().isEmpty()){
-			criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY); // ??
+			criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 			for(Entry<String, String> join : filterResult.getJoins().entrySet()){
 				criteria.createAlias(join.getKey(), join.getValue(), getJoinType(join.getValue()));
 			}

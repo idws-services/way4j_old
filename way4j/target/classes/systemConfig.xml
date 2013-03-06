@@ -3,7 +3,7 @@
 
 	<configurations systemName="testApp">
 		
-		<dataSource user="postgresql" url="jdbc:postgresql://localhost:5432/idws_service_1" password="postgresql" driver="org.postgresql.Driver">
+		<dataSource url="jdbc:postgresql://localhost:5432/idws_service_1" user="postgres" password="postgresql" driver="org.postgresql.Driver">
 			<hibernateProps>
 				 <prop name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
 			</hibernateProps>
@@ -19,24 +19,5 @@
 		</resourceLocations>
 		
 	</configurations>
-	
-	<modules>
-		<module name="Usuario">
-			
-			<bean name="Usuario" table="m_usuario" type="M">
-				
-				<property name="id_usuario" type="Bean[]" primaryKey="true" manyToManyTable="mm_qqr_coisa" service="Algum"/>
-				<property name="nome" type="String" maxLength="50"/>
-				<property name="telefone" type="String" maxLength="20"/>
-				<property name="id_pais" type="Bean" service="LtPais"/>
-			</bean>
-			
-			<bean name="LtPais" type="A">
-				<property name="ID_PAIS" type="Integer" primaryKey="true"/>
-				<property name="NOME" type="String"/>
-			</bean>
-			
-		</module>
-	</modules>
 	
 </system>

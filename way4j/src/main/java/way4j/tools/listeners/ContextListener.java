@@ -81,13 +81,20 @@ public class ContextListener implements ServletContextListener{
 		
 		FilterParser fp = new FilterParser();
 		// examplo trazendo os usuários que estão não estão cursando Geografia ( sRelacionamento MM )
-		userDao.list("[{" +
+		userDao.list("[" +
+						"{" +
 							"or:[" +
 									"{c:{f:'cursos.nome', o:'<>', v:'Engenharia'}},"+
 									"{c:{f:'cursos.nome', o:'=', v:'Marketing'}},"+
 									"{c:{f:'login', o:'=', v:'Maria'}}"+
 							"]" +
-						"}]");
+						"},{" +
+							"configs : {" +
+								"range : { min : 4, max : '10' }," +
+								"order : { by : 'login', type : 'asc' }" +
+							"}" +
+						"}" +
+					"]");
 		
 		
 		

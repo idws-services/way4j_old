@@ -6,18 +6,15 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 
 public class SearchCriteria {
-	
+
 	private Criterion criterion;
 	private Order order;
 	private Map<String, String> joins;
-	//private Map<String, SearchCriteria> subQueries;
 	private Integer start;
 	private Integer limit;
 	
-	
 	public SearchCriteria(){
 		joins = new HashMap<String, String>();
-		//subQueries = new HashMap<String, SearchCriteria>();
 	}
 	
 	public Criterion getCriterion() {
@@ -51,11 +48,4 @@ public class SearchCriteria {
 		this.limit = limit;
 	}
 
-	/*public Map<String, SearchCriteria> getSubQueries() {
-		return subQueries;
-	}
-
-	public void setSubQueries(Map<String, SearchCriteria> subQueries) {
-		this.subQueries = subQueries;
-	}*/
 }

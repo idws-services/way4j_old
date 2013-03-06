@@ -11,7 +11,7 @@ public class POutPutText extends Component{
 	public OutputTextTag createComponent(){
 		
 		OutputTextTag outPutText = new OutputTextTag();
-		outPutText.setValue(JSFExpressions.createValueExpression(getValue()));
+		//outPutText.setValue(JSFExpressions.createValueExpression(getValue()));
 		
 		return outPutText;
 		

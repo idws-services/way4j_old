@@ -46,6 +46,7 @@ public class Constants {
 		//public static final String WHERE = "where";
 		public static final String BEAN = "bean";
 		public static final String RANGE = "range";
+		public static final String CONFIGS = "configs";
 		
 		public static final String VALUE = "v";
 		public static final String VALUE1 = "v1";
@@ -95,7 +96,7 @@ public class Constants {
 		
 		public enum AgregationFunctions{
 			
-			AVG("avg"), COUNT("count"), MIN("min"), MAX(""),
+			AVG("avg"), COUNT("count"), MIN("min"), MAX("max"),
 			
 			FUNC_FIELD("funcField"), EXTRA_FIELD("extraField"), GROUP_BY("groupBy");
 			

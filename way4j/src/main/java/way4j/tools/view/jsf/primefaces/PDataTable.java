@@ -28,14 +28,14 @@ public class PDataTable extends Component{
 		
 		DataTable dataTable = new DataTable();
 		dataTable.setColumns(getColumns());
-		dataTable.setValue(JSFExpressions.createValueExpression(getValue()));
+		//dataTable.setValue(JSFExpressions.createValueExpression(getValue()));
 		dataTable.setVar(getValueVar());
 		dataTable.setEmptyMessage(getEmptyMessage());
 		dataTable.setPaginator(isPaginate());
 		dataTable.setDraggableColumns(isDraggableColumns());
 		dataTable.setPaginatorPosition(getPaginationPosition());
 		dataTable.setSelectionMode(getSelectionModel());
-		dataTable.setSelection(JSFExpressions.createValueExpression(getSelectionVar()));
+		//dataTable.setSelection(JSFExpressions.createValueExpression(getSelectionVar()));
 		dataTable.setRowsPerPageTemplate(getRowsPerPageTemplate());
 		
 		return dataTable;

@@ -18,8 +18,8 @@ public class PColumn extends Component{
 	public UIColumn createComponent(){
 		
 		Column column = new Column();
-		column.setSortBy(JSFExpressions.createValueExpression(getSortBy()));
-		column.setFilterBy(JSFExpressions.createValueExpression(getFilterBy()));
+		//column.setSortBy(JSFExpressions.createValueExpression(getSortBy()));
+		//column.setFilterBy(JSFExpressions.createValueExpression(getFilterBy()));
 		column.setWidth(getWidth());
 		column.setResizable(isResizable());
 		
