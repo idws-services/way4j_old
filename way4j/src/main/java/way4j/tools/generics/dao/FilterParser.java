@@ -23,7 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import way4j.tools.utils.ClassUtils;
+import way4j.tools.utils.ModelUtils;
 import way4j.tools.utils.GenericUtils;
 import way4j.tools.utils.constants.Constants;
 
@@ -63,42 +63,42 @@ import way4j.tools.utils.constants.Constants;
 // condições do mesmo contexto, para evitar condições in repetidas desnecessáriamente, diminuindo performance.
 
 public class FilterParser{
-	
-	private SearchCriteria filterResult;
+
+	private FilterCriteria filterResult;
 	private Class typeClass;
-	
+
 	public FilterParser(){}
 	public FilterParser(Class c){
 		setTypeClass(c);
 	}
-	
-	public SearchCriteria parseFilter(String filter){
+
+	public FilterCriteria parseFilter(String filter){
 		try{
 
-			filterResult = new SearchCriteria();
-			
+			filterResult = new FilterCriteria();
+
 			if(!GenericUtils.isJsonArray(""+filter)){
 				filter = "["+filter+"]";
 			}
-			
+
 			filterResult.setCriterion(parseFilter(new JSONArray(""+filter), null));
-			
+
 			return filterResult;
 		}catch(JSONException ex){
 			ex.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	public Criterion parseFilter(JSONArray filter, Constants.FilterConstants.GroupCondition groupType){
 		try {
-			
+
 			if(groupType == null){
 				groupType = Constants.FilterConstants.GroupCondition.AND;
 			}
-			
+
 			List<Criterion> criterions = new ArrayList<Criterion>();
-			
+
 			for(int i=0;i<filter.length();i++){
 				JSONObject filterItem = filter.getJSONObject(i);
 				if(filterItem.has(Constants.FilterConstants.CONDITION)){
@@ -136,14 +136,14 @@ public class FilterParser{
 					}
 				}
 			}
-			
+
 			Junction resultJunction = null;
 			if(groupType.equals(Constants.FilterConstants.GroupCondition.AND)){
 				resultJunction = Restrictions.conjunction();
 			}else if(groupType.equals(Constants.FilterConstants.GroupCondition.OR)){
 				resultJunction = Restrictions.disjunction();
 			}
-			
+
 			for(Criterion c : criterions){
 				resultJunction.add(c);
 			}
@@ -153,9 +153,9 @@ public class FilterParser{
 		}
 		return null;
 	}
-	
+
 	private Order getOrderBy(JSONObject order) throws JSONException{
-		
+
 		if(order != null){
 			String orderType = (String) order.get(Constants.FilterConstants.TYPE);
 			String orderBy = (String) order.get(Constants.FilterConstants.Order.BY.value());
@@ -169,7 +169,7 @@ public class FilterParser{
 		}
 		return null;
 	}
-	
+
 	public Junction parseGroupConditions(JSONArray groupConditions, Constants.FilterConstants.GroupCondition conditionType) throws JSONException{
 		//groupConditions = compileGroupConditions(groupConditions, conditionType);
 		Junction groupConditionResult = null;
@@ -178,12 +178,12 @@ public class FilterParser{
 		}else if(conditionType.equals(Constants.FilterConstants.GroupCondition.OR)){
 			groupConditionResult = Restrictions.disjunction();
 		}
-		
+
 		Constants.FilterConstants.GroupCondition reverseConditionType = Constants.FilterConstants.GroupCondition.AND;
 		if(conditionType.equals(Constants.FilterConstants.GroupCondition.AND)){
 			reverseConditionType = Constants.FilterConstants.GroupCondition.OR;
 		}
-		
+
 		for(int c=0;c<groupConditions.length();c++){
 			if(groupConditions.getJSONObject(c).has(reverseConditionType.value())){
 				Junction juncAux = groupConditionResult;
@@ -207,44 +207,44 @@ public class FilterParser{
 		}
 		return groupConditionResult.toString().equals("()") ? null : groupConditionResult;
 	}
-	
+
 	public Criterion parseCondition(JSONObject jsonCondition, Constants.FilterConstants.GroupCondition groupType, boolean parseJoin) throws JSONException, SecurityException, NoSuchFieldException, ClassNotFoundException{
-		
+
 		if(jsonCondition.has(Constants.FilterConstants.CONDITION)){
 			jsonCondition = jsonCondition.getJSONObject(Constants.FilterConstants.CONDITION);
 		}
-		
+
 		String field = (String) jsonCondition.get(Constants.FilterConstants.FIELD);
 		Object conditionValue = getConditionValue(jsonCondition, false);
 		Object operator = null;
 		if(jsonCondition.has(Constants.FilterConstants.OPERATOR)){
 			operator = jsonCondition.get(Constants.FilterConstants.OPERATOR);
 		}
-		
+
 		// Criando joins, e subquerys
 		if(field.contains(".") && parseJoin){
 			if(typeClass.getDeclaredField(field.split("\\.")[0]).getAnnotation(ManyToMany.class) != null 
 					|| typeClass.getDeclaredField(field.split("\\.")[0]).getAnnotation(OneToMany.class) != null){
-				
+
 				String realField = field.split("\\.")[0];
-				String originClassIdAlias = ClassUtils.getIdField(typeClass).getName();
+				String originClassIdAlias = ModelUtils.getIdField(typeClass).getName();
 				Class classOfFied = getClassOfField(realField);
-				
+
 				if(operator != null && operator.equals(Constants.Operators.NOT_IN.value()) || operator.equals(Constants.Operators.NOT_EQUALS.value())){
 					jsonCondition.put(Constants.FilterConstants.OPERATOR, Constants.Operators.IN.value());
 				}
-				
+
 				DetachedCriteria detachedCriteria = DetachedCriteria.forClass(typeClass);
 				detachedCriteria.createAlias(realField, realField, Criteria.INNER_JOIN);
 				detachedCriteria.add(parseCondition(jsonCondition, groupType, false));
 				detachedCriteria.setProjection(Projections.property(originClassIdAlias));
-				
+
 				if(operator != null && !operator.equals(Constants.Operators.NOT_IN.value()) && !operator.equals(Constants.Operators.NOT_EQUALS.value())){
 					return Property.forName(originClassIdAlias).in(detachedCriteria);	
 				}else{
 					return Property.forName(originClassIdAlias).notIn(detachedCriteria);
 				}
-				
+
 			}else{
 				String[] fields = field.split("\\.");
 				String passedObjects = "";
@@ -254,7 +254,7 @@ public class FilterParser{
 				}
 			}
 		}
-		
+
 
 		if(operator.equals(Constants.Operators.STARTS_WITH.value())){
 			return Restrictions.like(field,conditionValue+"%");
@@ -294,13 +294,13 @@ public class FilterParser{
 		}else if(operator.equals(Constants.Operators.CONTAINS.value())){
 			return Restrictions.ilike(field, "%"+conditionValue+"%");
 		}
-		
+
 		return null;
 	}
-	
+
 	public Class getClassOfField(String f) throws SecurityException, NoSuchFieldException, ClassNotFoundException{
 		Field field = typeClass.getDeclaredField(f);
-		if(ClassUtils.implementsClass(field, Collection.class)){
+		if(ModelUtils.implementsClass(field, Collection.class)){
 			String className = field.getGenericType().toString();
 			className = (String) className.subSequence(className.indexOf("<")+1, className.indexOf(">", className.indexOf("<")));
 			return Class.forName(className);
@@ -308,9 +308,9 @@ public class FilterParser{
 			return field.getType();
 		}
 	}
-	
+
 	public Object getConditionValue(JSONObject jsonCondition, boolean returnAll) throws JSONException{
-		
+
 		if(jsonCondition.has(Constants.FilterConstants.CONDITION)){
 			jsonCondition = jsonCondition.getJSONObject(Constants.FilterConstants.CONDITION);
 		}
@@ -321,7 +321,7 @@ public class FilterParser{
 		}
 		if(returnAll){
 			List<String> listValues = new ArrayList<String>();
-			
+
 			if(jsonCondition.get(Constants.FilterConstants.VALUE)!= null){
 				listValues.add(Constants.FilterConstants.VALUE+" : '"+jsonCondition.get(Constants.FilterConstants.VALUE)+"'");
 			}
@@ -331,16 +331,16 @@ public class FilterParser{
 			if(jsonCondition.get(Constants.FilterConstants.VALUE2)!= null){
 				listValues.add(Constants.FilterConstants.VALUE2+" : "+jsonCondition.get(Constants.FilterConstants.VALUE2)+"'");
 			}
-			
+
 			String values = "{";
-			
+
 			for(int i=0;i<listValues.size();i++){
 				values += listValues.get(i);
 				if((i+1)!=listValues.size()){
 					values += ",";
 				}
 			}
-			
+
 			return values+"}";
 		}else{
 			if(jsonCondition.get(Constants.FilterConstants.VALUE)!= null){
@@ -352,53 +352,9 @@ public class FilterParser{
 			}
 		}
 		return null;
-		
+
 	}
-	
-	public JSONArray getFilterElement(JSONArray jsonArray) throws JSONException{
-		
-		JSONArray filterConfig = null;
-		if(jsonArray.length() > 1){
-			return jsonArray;
-		}else{
-			filterConfig = searchJsonArrayInFilter(jsonArray, Constants.FilterConstants.GroupCondition.AND.value(), false);
-			if(filterConfig == null){
-				filterConfig = searchJsonArrayInFilter(jsonArray, Constants.FilterConstants.GroupCondition.OR.value(), false);
-			}
-			if(filterConfig == null){
-				filterConfig = searchJsonArrayInFilter(jsonArray, Constants.FilterConstants.CONDITION, false);
-			}
-		}
-		return filterConfig;
-	}
-	
-	public JSONArray searchJsonArrayInFilter(JSONArray jsonArray, String key, boolean returnChild) throws JSONException{
-		for(int i=0;i<jsonArray.length();i++){
-			if(jsonArray.getJSONObject(i).has(key)){
-				if(returnChild){
-					return toJsonArray(""+jsonArray.getJSONObject(i).get(key));	
-				}else{
-					return toJsonArray(""+jsonArray.getJSONObject(i));
-				}	
-			}
-		}
-		return null;
-	}
-	
-	public static JSONObject searchJsonObjectInFilter(JSONArray jsonArray, String key, boolean returnChild) throws JSONException{
-		for(int i=0;i<jsonArray.length();i++){
-			if(jsonArray.getJSONObject(i).has(key)){
-				if(returnChild){
-					return new JSONObject(""+jsonArray.getJSONObject(i).get(key));	
-				}else{
-					return jsonArray.getJSONObject(i);
-				}
-				
-			}
-		}
-		return null;
-	}
-	
+
 	private JSONArray toJsonArray(Object json) throws JSONException{
 		if(!GenericUtils.isJsonArray(json)){
 			json = "["+json+"]";
@@ -406,20 +362,20 @@ public class FilterParser{
 		return new JSONArray(""+json);
 	}
 
-	public SearchCriteria getFilterResult() {
+	public FilterCriteria getFilterResult() {
 		return filterResult;
 	}
 
-	public void setFilterResult(SearchCriteria filterResult) {
+	public void setFilterResult(FilterCriteria filterResult) {
 		this.filterResult = filterResult;
 	}
-	
+
 	public void setTypeClass(Class c){
 		this.typeClass = c;
 	}
-	
+
 	public static class FilterCompiler{
-		
+
 		public static void compileGroupCondition(JSONArray groupConditions, Constants.FilterConstants.GroupCondition groupType) throws JSONException{
 
 			// TODO o compilador deve levar em consideração, o operador, por causa das condições criados no parseCondition
@@ -443,7 +399,7 @@ public class FilterParser{
 				}
 			}
 			JSONArray newGroupConditions = new JSONArray();
-			
+
 			for(Entry<String, String> c : fieldsCompiled.entrySet()){
 				newGroupConditions.put(new JSONObject("{c:{f:'"+c.getKey()+"',filter:[{"+groupType.value()+":"+c.getValue()+"}]}}"));
 			}
@@ -452,7 +408,7 @@ public class FilterParser{
 			}
 			groupConditions = newGroupConditions;			
 		}
-		
+
 	}
-	
+
 }

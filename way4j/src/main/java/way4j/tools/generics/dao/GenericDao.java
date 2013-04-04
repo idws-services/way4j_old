@@ -23,7 +23,6 @@ public class GenericDao<T extends Serializable> implements IGenericDao<T>{
 		filterParser = new FilterParser(typeClass);
 	}
 	
-
 	public SessionFactory getSessionFactory(){
 		if(sessionFactory == null){
 			sessionFactory = (SessionFactory) GenericUtils.springContext.getBean(SessionFactory.class);
@@ -63,8 +62,8 @@ public class GenericDao<T extends Serializable> implements IGenericDao<T>{
 		finishTransaction(session);
 	}
 	
-	public void delete(SearchCriteria filter) {
-		List<T> lines = list(filter);
+	public void delete(FilterCriteria filter) {
+		List<T> lines = loadFilterToCriteria(filter).list();
 		Session session = startTransaction(); 
 		for(T l : lines){
 			session.delete(l);	
@@ -87,16 +86,8 @@ public class GenericDao<T extends Serializable> implements IGenericDao<T>{
 		return (T) configureCriteriaByFilter(filter).uniqueResult();
 	}
 	
-	public T get(SearchCriteria filter) {
-		return (T) loadFilterToCriteria(filter).uniqueResult();
-	}
-	
 	public List<T> list(String filter) {
 		return configureCriteriaByFilter(filter).list();
-	}
-	
-	public List<T> list(SearchCriteria filterCriteria) {
-		return loadFilterToCriteria(filterCriteria).list();
 	}
 	 
 	protected Criteria configureCriteriaByFilter(String filter){
@@ -107,7 +98,7 @@ public class GenericDao<T extends Serializable> implements IGenericDao<T>{
 		}
 	}
 	
-	protected Criteria loadFilterToCriteria(SearchCriteria filterResult){
+	protected Criteria loadFilterToCriteria(FilterCriteria filterResult){
 		Criteria criteria = createCriteria();
 		if(filterResult.getCriterion() != null){
 			criteria.add(filterResult.getCriterion());

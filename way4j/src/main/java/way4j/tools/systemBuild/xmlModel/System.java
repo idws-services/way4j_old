@@ -2,6 +2,9 @@ package way4j.tools.systemBuild.xmlModel;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class System {
 	
 	private Configurations configurations;

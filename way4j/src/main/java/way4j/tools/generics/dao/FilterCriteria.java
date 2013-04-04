@@ -5,7 +5,7 @@ import java.util.Map;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 
-public class SearchCriteria {
+public class FilterCriteria {
 
 	private Criterion criterion;
 	private Order order;
@@ -13,7 +13,7 @@ public class SearchCriteria {
 	private Integer start;
 	private Integer limit;
 	
-	public SearchCriteria(){
+	public FilterCriteria(){
 		joins = new HashMap<String, String>();
 	}
 	

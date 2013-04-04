@@ -14,16 +14,13 @@ public interface IGenericDao<T> {
 	public void delete(Long id);
 	public void delete(T obj);
 	public void delete(String filter);
-	public void delete(SearchCriteria filter);
 	
 	public T update(T obj);
 	
 	public T get(Long id);
 	public T get(String filter);
-	public T get(SearchCriteria filter);
 	
 	public List<T> list(String filter);
-	public List<T> list(SearchCriteria filter);
 	public Long getRowCount(String filter);
 	
 	public SessionFactory getSessionFactory();

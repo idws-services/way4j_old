@@ -6,6 +6,8 @@ import java.util.List;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import sun.net.www.content.text.Generic;
+
 import way4j.tools.defaults.dao.CursoDao;
 import way4j.tools.defaults.dao.LanguageDao;
 import way4j.tools.defaults.dao.UserDao;
@@ -79,23 +81,19 @@ public class ContextListener implements ServletContextListener{
 		user2.setSenha("projetos");
 		userDao.insert(user2);
 		
-		FilterParser fp = new FilterParser();
-		// examplo trazendo os usuários que estão não estão cursando Geografia ( sRelacionamento MM )
-		userDao.list("[" +
+		// examplo trazendo os usuários que estão não estão cursando Geografia ( Relacionamento MM )
+		/*userDao.list(
 						"{" +
 							"or:[" +
-									"{c:{f:'cursos.nome', o:'<>', v:'Engenharia'}},"+
+									"{c:{f:'language.name', o:'<>', v:'PT'}},"+
 									"{c:{f:'cursos.nome', o:'=', v:'Marketing'}},"+
 									"{c:{f:'login', o:'=', v:'Maria'}}"+
 							"]" +
-						"},{" +
-							"configs : {" +
-								"range : { min : 4, max : '10' }," +
-								"order : { by : 'login', type : 'asc' }" +
-							"}" +
-						"}" +
-					"]");
+						"}"
+					);*/
 		
+		System.out.println(GenericUtils.json.toJson(curso1));
+		System.out.println(GenericUtils.json.toJson(user1));
 		
 		
 	}

@@ -16,6 +16,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
@@ -26,6 +27,7 @@ import way4j.tools.systemBuild.xmlModel.Configurations;
 import way4j.tools.systemBuild.xmlModel.Module;
 import way4j.tools.systemBuild.xmlModel.ResourceLocations;
 import way4j.tools.systemBuild.xmlModel.System;
+import way4j.tools.utils.GenericUtils;
 import way4j.tools.utils.constants.Constants;
 import way4j.tools.utils.constants.XmlSysConfigConstants;
 

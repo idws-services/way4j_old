@@ -2,175 +2,78 @@ package way4j.tools.generics.controller;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.springframework.beans.BeansException;
-
-import way4j.tools.generics.lazyDataModel.GenericLazyDataModel;
-import way4j.tools.generics.service.IGenericService;
-import way4j.tools.utils.ClassUtils;
+import way4j.tools.generics.service.GenericService;
+import way4j.tools.utils.ModelUtils;
 import way4j.tools.utils.GenericUtils;
+import way4j.tools.utils.constants.Constants;
 
 public class GenericController<T extends Serializable> implements IGenericController<T> {
 	
-	protected Class typeClass;
-	protected GenericLazyDataModel<T> listGrid;
-	protected T actionObj;
-	protected String jsonActionObject;
-	protected Long idToGet;
-	protected T[] selectedItemsFromGrid;
-	protected String filter;
-	protected IGenericService<T> service;
+	private Class typeClass;
+	private GenericService<T> service;
 	
 	public GenericController(){
-		
-		this.typeClass = GenericUtils.getGenericTypeClass(this.getClass());
-		
-		try {
-			listGrid = (GenericLazyDataModel<T>) ClassUtils.getLazyDataModelOfModel(typeClass).newInstance();
-			actionObj = (T) typeClass.newInstance();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+		this.typeClass = GenericUtils.getGenericTypeClass(getClass());
+	}
+	
+	@Override
+	public T insert(Map params) {
+		T actionObject = (T) GenericUtils.json.fromJson(String.valueOf(params.get(Constants.Parameters.ACTION_OBJ.value())), typeClass);
+		actionObject = getService().insert(actionObject);
+		return actionObject;
 	}
 
-	public T insert() {
-		T obj = getService().insert(actionObj);
-		refreshObjects();
-		return obj;
-	}
-
-	public void delete() {
-		if(selectedItemsFromGrid != null){
-			for(T selItem : selectedItemsFromGrid){
-				getService().delete(selItem);	
+	@Override
+	public void delete(Map params) {
+		if(params.get(Constants.Parameters.FILTER.value()) != null){
+			String filter = String.valueOf(params.get(Constants.Parameters.FILTER.value()));
+			getService().delete(filter);
+		}else if(params.get(Constants.Parameters.ACTION_OBJ) != null){
+			long[] ids = GenericUtils.json.fromJson(String.valueOf(params.get(Constants.Parameters.ACTION_OBJ)), new long[]{}.getClass());
+			StringBuilder filter = new StringBuilder("{or:[");
+			String idField = ModelUtils.getIdField(typeClass).getName();
+			for(long id : ids){
+				filter.append("{c:{f:'"+idField+"',o:'=',v:'"+id+"'}},");
 			}
-		}
-	}
-	
-	public void deleteById(Long id){
-		getService().delete(id);
-	}
-	
-	public void deleteById(Long[] id){
-		for(Long i : id){
-			getService().delete(i);
+			filter.deleteCharAt(filter.toString().length());
+			filter.append("]}");
+			getService().delete(filter.toString());
 		}
 	}
 
-	public void update() {
-		getService().update(actionObj);
-		refreshObjects();
+	@Override
+	public T update(Map params) {
+		T actionObject = (T) GenericUtils.json.fromJson(String.valueOf(params.get(Constants.Parameters.ACTION_OBJ)), typeClass);
+		actionObject = getService().update(actionObject);
+		return actionObject;
 	}
 
-	public T get() {
-		return getService().get(idToGet);
+	@Override
+	public T get(Map params) {
+		T result = null;
+		if(params.get(Constants.Parameters.ID.value()) != null){
+			long id = GenericUtils.json.fromJson(String.valueOf(params.get(Constants.Parameters.ID.value())), long.class);
+			result = getService().get(id);
+		}else if(params.get(Constants.Parameters.FILTER.value()) != null){
+			String filter = String.valueOf(params.get(Constants.Parameters.FILTER.value()));
+			result = getService().get(filter);
+		}
+		return result;
 	}
 
-	public ServletRequest getRequest() {
-		return (ServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-		
+	@Override
+	public List<T> list(Map params) {
+		return getService().list(String.valueOf(params.get(Constants.Parameters.FILTER.value())));
 	}
 
-	public ServletResponse getResponse() {
-		return (ServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
-	}
-	
-	public HttpSession getSession() {
-		return (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-	}
-	
-	protected IGenericService<T> getService(){
+	@Override
+	public GenericService<T> getService() {
 		if(service == null){
-			try {
-				return GenericUtils.springContext.getBean(ClassUtils.getServiceOfModel(typeClass));
-			} catch (BeansException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
+			service = GenericUtils.getService(typeClass);
 		}
 		return service;
-	}
-	
-	public String listToJson(){
-		List<T> list =  getService().list(filter);
-		return GenericUtils.gson.toJson(list);
-	}
-	
-	public void refreshObjects() {
-		try {
-			actionObj = (T) typeClass.newInstance();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public GenericLazyDataModel getListGrid() {
-		return this.listGrid;
-	}
-
-	public void setListGrid(GenericLazyDataModel lazyDataModel) {
-		this.listGrid = lazyDataModel;
-	}
-
-	public Class getTypeClass() {
-		return typeClass;
-	}
-
-	public void setTypeClass(Class typeClass) {
-		this.typeClass = typeClass;
-	}
-
-	public T getActionObj() {
-		return actionObj;
-	}
-
-	public void setActionObj(T actionObj) {
-		this.actionObj = actionObj;
-	}
-
-	public Long getIdToGet() {
-		return idToGet;
-	}
-
-	public void setIdToGet(Long idToGet) {
-		this.idToGet = idToGet;
-	}
-
-	public T[] getSelectedItemsFromGrid() {
-		return selectedItemsFromGrid;
-	}
-
-	public void setSelectedItemsFromGrid(T[] selectedItemsFromGrid) {
-		this.selectedItemsFromGrid = selectedItemsFromGrid;
-	}
-
-	
-	public String getFilter() {
-		return filter;
-	}
-
-	public void setFilter(String filter) {
-		this.filter = filter;
-	}
-
-	public String getJsonActionObj() {
-		return this.jsonActionObject;
-	}
-
-	public void setJsonActionObj(String jsonObj) {
-		this.jsonActionObject = jsonObj;
 	}
 	
 }

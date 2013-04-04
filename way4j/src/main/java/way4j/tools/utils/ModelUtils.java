@@ -12,15 +12,17 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 
 import way4j.tools.systemBuild.xmlModel.ResourceLocations;
+import way4j.tools.systemBuild.xmlModel.System;
 import way4j.tools.systemBuild.xmlParser.SystemParser;
 import way4j.tools.utils.constants.Constants;
 
-public class ClassUtils {
+public class ModelUtils {
 
 	private static ResourceLocations packageLocations;
 
 	static {
-		packageLocations = new SystemParser().configurePackageLocations();
+		packageLocations = GenericUtils.springContext.getBean(SystemParser.class)
+								.getSystem().getConfigurations().getResourceLocations();
 	}
 
 	public static Class getModelClass(String className) {
@@ -93,13 +95,6 @@ public class ClassUtils {
 			throws ClassNotFoundException {
 		return searchClass(getClassName(clazz) + Constants.SERVICE_SUFIX,
 				new String[] { packageLocations.getService() });
-	}
-
-	public static Class getLazyDataModelOfModel(Class clazz)
-			throws ClassNotFoundException {
-		return searchClass(getClassName(clazz)
-				+ Constants.LAZY_DATA_MODEL_SUFIX,
-				new String[] { packageLocations.getLazyDataModel() });
 	}
 
 	public static String getClassName(Class clazz) {

@@ -10,16 +10,6 @@
   <name>way4j</name>
   <url>http://maven.apache.org</url>
 
-
-	<repositories>
-		<repository>  
-		    <id>prime-repo</id>  
-		    <name>PrimeFaces Maven Repository</name>  
-		    <url>http://repository.primefaces.org</url>  
-		    <layout>default</layout>  
-		</repository>  	
-	</repositories>
-
   <dependencies>
              	
     <dependency>
@@ -152,36 +142,6 @@
 	</dependency>
 	
 	<dependency>
-		<groupId>com.google.code.gson</groupId>
-		<artifactId>gson</artifactId>
-		<version>2.2.2</version>
-	</dependency>
-
- 	<dependency>
-      <groupId>com.sun.faces</groupId>
-      <artifactId>jsf-api</artifactId>
-      <version>2.1.6</version>
-    </dependency>
- 
-    <dependency>
-      <groupId>com.sun.faces</groupId>
-      <artifactId>jsf-impl</artifactId>
-      <version>2.1.6</version>
-    </dependency>
-    
-    <dependency>
-		<groupId>jstl</groupId>
-		<artifactId>jstl</artifactId>
-		<version>1.2</version>
-	</dependency>
-	
-	<dependency>  
-	    <groupId>org.primefaces</groupId>  
-	    <artifactId>primefaces</artifactId>  
-	    <version>3.4.2</version>  
-	</dependency>  
- 	
- 	<dependency>
         <groupId>net.sf.json-lib</groupId>
         <artifactId>json-lib</artifactId>
         <version>2.4</version>
@@ -199,6 +159,13 @@
 		<artifactId>el-impl</artifactId>  
 		<version>2.2</version>  
   	</dependency>  
+	
+	<dependency>
+		<groupId>com.google.code.gson</groupId>
+		<artifactId>gson</artifactId>
+		<version>2.2.2</version>
+	</dependency>
+            
 	
   </dependencies>
 

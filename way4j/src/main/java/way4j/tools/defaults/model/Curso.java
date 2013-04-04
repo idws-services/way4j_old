@@ -37,9 +37,4 @@ public class Curso implements Serializable{
 		this.nome = nome;
 	}
 	
-	@Override
-	public String toString(){
-		return GenericUtils.gson.toJson(this);
-	}
-	
 }

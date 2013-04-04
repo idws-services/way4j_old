@@ -49,10 +49,5 @@ public class Pessoa implements Serializable{
 	public void setTelefone(String telefone) {
 		this.telefone = telefone;
 	}
-
-	@Override
-	public String toString(){
-		return GenericUtils.gson.toJson(this);
-	}
 	
 }

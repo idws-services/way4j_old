@@ -24,7 +24,7 @@ public class Constants {
 	
 	public enum Parameters{
 		
-		MODEL_CLASS("modelClass"), JSON_OBJ("jsonObj"), METHOD("method"), JSON_INJECT("jsonInject");
+		MODEL_CLASS("modelClass"), ACTION_OBJ("actionObject"), METHOD("method"), FILTER("filter"), ID("id");
 		
 		String value;
 		Parameters(String value) {
